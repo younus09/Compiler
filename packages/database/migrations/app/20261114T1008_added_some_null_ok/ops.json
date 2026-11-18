@@ -1,0 +1,190 @@
+[
+  {
+    "id": "alterNullability.dropNotNull.Submission.exitcode",
+    "label": "Drop NOT NULL on \"Submission\".\"exitcode\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "exitcode",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"exitcode\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "exitcode"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"exitcode\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"exitcode\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\" ALTER COLUMN \"exitcode\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"exitcode\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "exitcode",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Submission.stdErr",
+    "label": "Drop NOT NULL on \"Submission\".\"stdErr\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "stdErr",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"stdErr\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "stdErr"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"stdErr\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"stdErr\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\" ALTER COLUMN \"stdErr\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"stdErr\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "stdErr",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Submission.stdIn",
+    "label": "Drop NOT NULL on \"Submission\".\"stdIn\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "stdIn",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"stdIn\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "stdIn"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"stdIn\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"stdIn\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\" ALTER COLUMN \"stdIn\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"stdIn\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "stdIn",
+          "YES"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.dropNotNull.Submission.stdOut",
+    "label": "Drop NOT NULL on \"Submission\".\"stdOut\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "stdOut",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"stdOut\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "stdOut"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"stdOut\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop NOT NULL on \"stdOut\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\" ALTER COLUMN \"stdOut\" DROP NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"stdOut\" is nullable",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Submission",
+          "stdOut",
+          "YES"
+        ]
+      }
+    ]
+  }
+]

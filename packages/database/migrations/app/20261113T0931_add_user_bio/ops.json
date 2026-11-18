@@ -1,0 +1,199 @@
+[
+  {
+    "id": "table.Submission",
+    "label": "Create table \"Submission\"",
+    "summary": "Creates table \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Submission\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Submission\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Submission\"",
+        "sql": "CREATE TABLE \"public\".\"Submission\" (\n  \"compileTimeMs\" int4,\n  \"createdAt\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"execTimeMs\" int4,\n  \"exitcode\" int4 NOT NULL,\n  \"id\" text NOT NULL,\n  \"language\" text NOT NULL,\n  \"memoryUsageKB\" int4,\n  \"srcCode\" text NOT NULL,\n  \"status\" text DEFAULT 'QUEUED' NOT NULL,\n  \"stdErr\" text NOT NULL,\n  \"stdIn\" text NOT NULL,\n  \"stdOut\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  \"userId\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Submission_language_check_239dbbef\" CHECK (\"language\" IN ('c', 'js', 'py')),\n  CONSTRAINT \"Submission_status_check_401003df\" CHECK (\"status\" IN ('QUEUED', 'RUNNING', 'COMPLETED', 'ERROR'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Submission\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Submission\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Submission\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "primaryKey.User.User_pkey",
+    "label": "Add primary key on \"User\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "primaryKey",
+        "name": "User_pkey",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure primary key \"User_pkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "User_pkey",
+          "public",
+          "\"public\".\"User\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "primary key \"User_pkey\" on \"User\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add primary key \"User_pkey\"",
+        "sql": "ALTER TABLE \"public\".\"User\" ADD CONSTRAINT \"User_pkey\" PRIMARY KEY (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify primary key \"User_pkey\" exists on (id)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "User_pkey",
+          "public",
+          "\"public\".\"User\"",
+          "p",
+          "[\"id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Submission.Submission_userId_idx_a489d58a",
+    "label": "Create index \"Submission_userId_idx_a489d58a\" on \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Submission_userId_idx_a489d58a",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Submission_userId_idx_a489d58a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Submission_userId_idx_a489d58a\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Submission_userId_idx_a489d58a\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Submission_userId_idx_a489d58a\"",
+        "sql": "CREATE INDEX \"Submission_userId_idx_a489d58a\" ON \"public\".\"Submission\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Submission_userId_idx_a489d58a\" exists on \"Submission\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Submission_userId_idx_a489d58a\"",
+          "i",
+          "I",
+          "\"public\".\"Submission\"",
+          "btree",
+          "[\"userId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Submission.Submission_userId_fkey",
+    "label": "Add foreign key \"Submission_userId_fkey\" on \"Submission\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Submission_userId_fkey",
+        "table": "Submission"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Submission_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Submission_userId_fkey",
+          "public",
+          "\"public\".\"Submission\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Submission_userId_fkey\" on \"Submission\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Submission_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Submission\"\nADD CONSTRAINT \"Submission_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"User\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Submission_userId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Submission_userId_fkey",
+          "public",
+          "\"public\".\"Submission\"",
+          "f",
+          "[\"userId\"]",
+          "\"public\".\"User\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  }
+]

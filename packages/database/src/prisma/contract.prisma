@@ -1,0 +1,46 @@
+// use prisma-8
+enum Status {
+  QUEUED
+  RUNNING
+  COMPLETED 
+  ERROR
+}
+enum Language {
+  c
+  js
+  py
+}
+
+model User {
+  id String @id @onCreate(uuid())
+  email     String             @unique
+  username  String
+  password  String
+  createdAt DateTime           @default(now()) @onCreate(now())
+  updatedAt temporal.UpdatedAt
+}
+
+
+model Submission{
+  id String @id @onCreate(uuid())
+
+  language Language
+  srcCode String
+  status Status @default(QUEUED)
+
+  stdOut String?
+  stdIn String?
+  stdErr String?
+
+  exitcode Int?
+  execTimeMs Int?
+  compileTimeMs  Int?
+  memoryUsageKB Int?
+
+  userId String 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @onCreate(now())
+  updatedAt temporal.UpdatedAt
+
+}
