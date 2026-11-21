@@ -1,5 +1,5 @@
 import { createClient } from "redis";
-import { executeC, executejs, executePy } from "./src/executeCodes";
+import { executeC, executeJs, executePy } from "./src/executeCodes";
 import type { Job, JobResult } from "./src/types/job";
 import { db } from "@repo/db";
 
@@ -37,41 +37,55 @@ async function startWorker() {
       }).update({
         status: "RUNNING",
       });
+      try {
+        switch (job.language) {
+          case "c":
+            console.log("c code running");
 
-      switch (job.language) {
-        case "c":
-          console.log("c code running");
+            result = await executeC(job);
 
-          result = await executeC(job);
+            console.log("hello");
 
-          console.log("hello");
+            break;
+          case "py":
+            console.log("python running");
+            result = await executePy(job);
+            break;
 
-          break;
-        // case "js":
-        //   console.log("python running");
-        //   result = await executePy(job);
+          case "js":
+            console.log("js running");
+            result = await executeJs(job);
+            break;
 
-        // case "py":
-        //   result = await executejs(job);
+          default:
+            throw new Error(`Unsupported language: ${job.language}`);
+        }
 
-        default:
-          throw new Error(`Unsupported language: ${job.language}`);
-          break;
+        await db.orm.public.Submission.where({
+          id: result.jobId,
+        }).update({
+          status: "COMPLETED",
+          stdOut: result.stdOut,
+          stdErr: result.stdErr,
+          exitcode: result.exitCode,
+        });
+        console.log(result);
+      } catch (error) {
+        console.error(`Job ${job.jobId} failed:`, error);
+        await db.orm.public.Submission.where({
+          id: job.jobId,
+        }).update({
+          status: "ERROR",
+        });
       }
-
-      await db.orm.public.Submission.where({
-        id: result.jobId,
-      }).update({
-        status: "COMPLETED",
-        stdOut: result.stdOut,
-        stdErr: result.stdErr,
-        exitcode: result.exitCode,
-      });
-      console.log(result);
-
       //update the db
     } catch (error) {
       console.error("Job execution failed:", error);
+      // await db.orm.public.Submission.where({
+      //   id: result.jobId,
+      // }).update({
+      //   status: "ERROR",
+      // });
     }
   }
 }
